@@ -1,0 +1,22 @@
+{
+  "name": "api-server",
+  "version": "1.0.0",
+  "description": "The backend server for social networking app.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://muzairrajput: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@github.com/muzairrajput/api-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/muzairrajput/api-server/issues"
+  },
+  "homepage": "https://github.com/muzairrajput/api-server#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
