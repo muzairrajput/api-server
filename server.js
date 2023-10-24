@@ -8,7 +8,7 @@ app.get('/healthcheck', function(req, res){
 
 dbConnection.connect(function(err) {
     if (err) throw err;
-    console.log("Connected!");
+    console.log("Connected to");
 });
 
 app.listen(8083);
