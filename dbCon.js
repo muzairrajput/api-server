@@ -8,12 +8,10 @@ var con = mysql.createConnection({
   port: 18460
 });
 
-con.connect((err) => {
-  if (err) {
-    console.error('Database connection error: ' + err.message);
-  } else {
-    console.log('Connected to Database');
-  }
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
 });
+
 
 module.exports = con;
