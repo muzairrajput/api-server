@@ -15,11 +15,12 @@ app.get('/merchant', (req, res) => {
             console.error('Error retrieving data: ' + error.message);
             res.status(500).send('Error retrieving data from the database');
         } else {
-            console.log('Data retrieved from User table');
+            console.log('Data retrieved from Merchant table');
             res.status(200).json(results); // Send the retrieved data as a JSON response
         }
     });
 });
+
 // Define a route to handle POST requests for data insertion
 app.post('/merchant', (req, res) => {
     console.log('POST request received at Create merchant route'); // Log to verify that the route handler is reached
@@ -34,8 +35,21 @@ app.post('/merchant', (req, res) => {
             console.error('Error inserting data: ' + error.message);
             res.status(500).send('Error inserting data into the database');
         } else {
-            console.log('Data inserted into User table');
-            res.status(200).send('Record added to the User table');
+            console.log('Data inserted into Merchant table');
+            res.status(200).send('Record added to the Merchant table');
+        }
+    });
+});
+
+app.get('/message', (req, res) => {
+    // Use a SELECT query to retrieve data from the User table
+    dbConnection.query('SELECT * FROM Message', (error, results) => {
+        if (error) {
+            console.error('Error retrieving data: ' + error.message);
+            res.status(500).send('Error retrieving data from the database');
+        } else {
+            console.log('Data retrieved from Message table');
+            res.status(200).json(results); // Send the retrieved data as a JSON response
         }
     });
 });
