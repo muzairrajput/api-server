@@ -3,7 +3,7 @@ var dbConnection = require('./dbCon');
 var app = express();
 app.use(express.json());
 
-app.get('/healthcheck', function(req, res){
+app.get('/healthcheck', function (req, res) {
     res.status(200).json("API Service is running");
 });
 
@@ -25,7 +25,7 @@ app.get('/merchant', (req, res) => {
 app.post('/merchant', (req, res) => {
     console.log('POST request received at Create merchant route'); // Log to verify that the route handler is reached
     // Use the data from the request body
-    const {businessName, businessDesc, businessLicenseNumber, userId} = req.body;
+    const { businessName, businessDesc, businessLicenseNumber, userId } = req.body;
     const userData = req.body;
     console.log('Data to be inserted:', userData); // Log to check the data being used for the insertion
     var query = `Insert into Merchant (BusinessName, BusinessDescription, BusinessLicenseNumber, User_ID) 
@@ -59,7 +59,7 @@ app.get('/user', (req, res) => {
 
     // Use a SELECT query to retrieve data from the User table
     dbConnection.query('SELECT * FROM User', (error, results) => {
-        
+
         if (error) {
             console.error('Error retrieving data: ' + error.message);
             res.status(500).send('Error retrieving data from the database');
@@ -79,20 +79,20 @@ app.post('/signup', (req, res) => {
     const Address = req.body.Address;
     const Phone = req.body.Phone;
     // Use the data from the request body
-    
+
 
     if (!Username || !Password || !Email || !Address || !Phone) {
         return res.status(400).json({ error: 'All fields must be filled for successful signup.' });
     }
-    
+
     //const hashedPassword = hashAndSalt(Password);
 
-    
+
 
     const query = "SELECT * FROM User WHERE Username = ? AND Password = ?"
     const userData = [Username, Password];
 
-    dbConnection.query(query,userData,(error,result) => {
+    dbConnection.query(query, userData, (error, result) => {
         if (error) {
             console.error('Error querying the database: ' + error.message);
             return res.status(500).json({ error: 'Error querying the database' });
@@ -120,7 +120,7 @@ app.post('/signup', (req, res) => {
 
 });
 
- 
+
 
 //get request for order table
 
@@ -133,7 +133,7 @@ app.get('/order', (req, res) => {
 
 
     dbConnection.query(sql, (error, results) => {
-        
+
         if (error) {
             console.error('Error retrieving data: ' + error.message);
             res.status(500).send('Error retrieving data from the database');
@@ -149,7 +149,7 @@ app.get('/order', (req, res) => {
 app.post('/order', (req, res) => {
     console.log('POST request received at Create Order route'); // Log to verify that the route handler is reached
     // Use the data from the request body
-    const {Customer_ID, OrderDate, TotalAmount} = req.body;
+    const { Customer_ID, OrderDate, TotalAmount } = req.body;
     const userData = req.body;
     console.log('Data to be inserted:', userData); // Log to check the data being used for the insertion
     var query = `Insert into OrderTable (Customer_ID, OrderDate, TotalAmount) 
@@ -166,28 +166,100 @@ app.post('/order', (req, res) => {
     });
 });
 
-app.post('/login', (req, res) => 
-{
-    const Username =req.body.Username;
+app.post('/login', (req, res) => {
+    const Username = req.body.Username;
     const Password = req.body.Password;
-     
+
     console.log('Data to be logged in:', Username, Password);
-   
+
     var query = "SELECT * FROM User WHERE Username = ? AND  Password = ?";
     //const hashedPassword = hashAndSalt(Password)
     dbConnection.query(query, [Username, Password], (err, result) => {
-        if(err) return res.json({Status: "Error", Error: "Error in running query"});
-        if(result.length > 0) {
-            return res.json({Status: "Success"})
+        if (err) return res.json({ Status: "Error", Error: "Error in running query" });
+        if (result.length > 0) {
+            return res.json({ Status: "Success" })
         } else {
-           
-               //console.log(db.query);
-               return res.json({Status: "Error", Error: "Wrong Username or Password"});
-            
-        }
-    })
-})
 
+            //console.log(db.query);
+            return res.json({ Status: "Error", Error: "Wrong Username or Password" });
+
+        }
+    });
+});
+
+app.get('/ChatRoom', (req, res) => {
+    console.log('GET request received at /retrieve route'); // Log to verify that the route handler is reached
+
+
+    dbConnection.query('SELECT * FROM ChatRoom', (error, results) => {
+
+        if (error) {
+            console.error('Error retrieving data: ' + error.message);
+            res.status(500).send('Error retrieving data from the database');
+        } else {
+            console.log('Data retrieved from User table');
+            res.status(200).json(results); // Send the retrieved data as a JSON response
+        }
+    });
+});
+
+app.post('/ChatRoom', (req, res) => {
+    console.log('POST request received at Create chatroom route'); // Log to verify that the route handler is reached
+    // Use the data from the request body
+    const { Customer_ID, Merchant_ID } = req.body;
+    const chatData = req.body;
+    console.log('Data to be inserted:', chatData); // Log to check the data being used for the insertion
+
+    var query = `INSERT INTO ChatRoom (Customer_ID, Merchant_ID) 
+                 VALUES (${Customer_ID}, ${Merchant_ID})`;
+
+    dbConnection.query(query, (error, results) => {
+        if (error) {
+            console.error('Error inserting data: ' + error.message);
+            res.status(500).send('Error inserting data into the database');
+        } else {
+            console.log('Data inserted into ChatRoom table');
+            res.status(200).send('Record added to the ChatRoom table');
+        }
+    });
+});
+
+app.get('/Customer', (req, res) => {
+    console.log('GET request received at /retrieve route'); // Log to verify that the route handler is reached
+
+
+    dbConnection.query('SELECT * FROM Customer', (error, results) => {
+
+        if (error) {
+            console.error('Error retrieving data: ' + error.message);
+            res.status(500).send('Error retrieving data from the database');
+        } else {
+            console.log('Data retrieved from User table');
+            res.status(200).json(results); // Send the retrieved data as a JSON response
+        }
+    });
+});
+
+app.post('/Customer', (req, res) => {
+    console.log('POST request received at Create customer route'); // Log to verify that the route handler is reached
+    // Use the data from the request body
+    const { Customer_ID, User_ID, Email, Address, Phone } = req.body;
+    const chatData = req.body;
+    console.log('Data to be inserted:', chatData); // Log to check the data being used for the insertion
+
+    var query = `INSERT INTO Customer(User_ID,Email,Address,Phone ) 
+    VALUES (${User_ID},'${Email}','${Address}','${Phone}')`;
+
+    dbConnection.query(query, (error, results) => {
+        if (error) {
+            console.error('Error inserting data: ' + error.message);
+            res.status(500).send('Error inserting data into the database');
+        } else {
+            console.log('Data inserted into ChatRoom table');
+            res.status(200).send('Record added to the ChatRoom table');
+        }
+    });
+});
 
 
 
