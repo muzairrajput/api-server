@@ -1,6 +1,7 @@
 var express = require('express');
 var dbConnection = require('./dbCon');
 var app = express();
+const bcrypt = require('bcrypt');
 app.use(express.json());
 
 app.get('/healthcheck', function (req, res) {
@@ -61,25 +62,21 @@ app.get('/user', (req, res) => {
 
 // Define a route to handle POST requests for data insertion
 app.post('/signup', (req, res) => {
-    console.log('POST request received at /signup route'); // Log to verify that the route handler is reached
-    const Username = req.body.Username;
-    const Password = req.body.Password;
-    const Email = req.body.Email;
-    const Address = req.body.Address;
-    const Phone = req.body.Phone;
-    // Use the data from the request body
+    console.log('POST request received at /signup route');
 
+    const {Username, Password, Email, Address, Phone} = req.body;
 
     if (!Username || !Password || !Email || !Address || !Phone) {
         return res.status(400).json({ error: 'All fields must be filled for successful signup.' });
     }
 
-    //const hashedPassword = hashAndSalt(Password);
+    // Hash the password
+    const saltRounds = 10; // You can adjust the number of salt rounds as needed
+    const hashedPassword = bcrypt.hashSync(Password, saltRounds);
 
 
-
-    const query = "SELECT * FROM User WHERE Username = ? AND Password = ?"
-    const userData = [Username, Password];
+    const query = "SELECT * FROM User WHERE Username = ?";
+    const userData = [Username];
 
     dbConnection.query(query, userData, (error, result) => {
         if (error) {
@@ -89,13 +86,14 @@ app.post('/signup', (req, res) => {
 
         if (result.length > 0) {
             // A matching user already exists
-            return res.status(400).json({ error: 'User with the same username and password already exists' });
+            return res.status(400).json({ error: 'User with the same username already exists' });
         }
 
-        //inserting user data
+        
 
-        const insertedQuery = "Insert into User (Username, Password, Email, Address, Phone) values (?,?,?,?,?)";
-        const insertedUserData = [Username, Password, Email, Address, Phone];
+        const insertedQuery = "INSERT INTO User (Username, Password, Email, Address, Phone) VALUES (?, ?, ?, ?, ?)";
+        const insertedUserData = [Username, hashedPassword, Email, Address, Phone];
+
         dbConnection.query(insertedQuery, insertedUserData, (error, results) => {
             if (error) {
                 console.error('Error inserting data: ' + error.message);
@@ -106,8 +104,8 @@ app.post('/signup', (req, res) => {
             }
         });
     });
-
 });
+
 
 
 
@@ -123,6 +121,28 @@ app.get('/order', (req, res) => {
 
     dbConnection.query(sql, (error, results) => {
 
+        if (error) {
+            console.error('Error retrieving data: ' + error.message);
+            res.status(500).send('Error retrieving data from the database');
+        } else {
+            console.log('Data retrieved from Order table');
+            res.status(200).json(results); // Send the retrieved data as a JSON response
+        }
+    });
+});
+
+
+//order by specific order id
+app.get('/order/:Order_ID', (req, res) => {
+    console.log('GET request received at /order route'); // Log to verify that the route handler is reached
+
+    // Extract the orderId parameter from the URL
+    const orderId = req.params.Order_ID;
+
+    // Query string using the orderId parameter
+    const sql = "SELECT * FROM OrderTable WHERE Order_ID = ?";
+
+    dbConnection.query(sql, [orderId], (error, results) => {
         if (error) {
             console.error('Error retrieving data: ' + error.message);
             res.status(500).send('Error retrieving data from the database');
@@ -155,26 +175,44 @@ app.post('/order', (req, res) => {
     });
 });
 
+
+
 app.post('/login', (req, res) => {
     const Username = req.body.Username;
     const Password = req.body.Password;
 
     console.log('Data to be logged in:', Username, Password);
 
-    var query = "SELECT * FROM User WHERE Username = ? AND  Password = ?";
-    //const hashedPassword = hashAndSalt(Password)
-    dbConnection.query(query, [Username, Password], (err, result) => {
+    const query = "SELECT * FROM User WHERE Username = ?";
+    dbConnection.query(query, [Username], (err, result) => {
         if (err) return res.json({ Status: "Error", Error: "Error in running query" });
+
         if (result.length > 0) {
-            return res.json({ Status: "Success" })
+            // User with the given username exists
+            const hashedPassword = result[0].Password;
+
+            // Compare the provided plaintext password with the hashed password
+            bcrypt.compare(Password, hashedPassword, (compareErr, isMatch) => {
+                if (compareErr) {
+                    return res.json({ Status: "Error", Error: "Error comparing passwords" });
+                }
+
+                if (isMatch) {
+                    // Passwords match, login successful
+                    return res.json({ Status: "Success" });
+                } else {
+                    // Passwords do not match
+                    return res.json({ Status: "Error", Error: "Wrong Username or Password" });
+                }
+            });
         } else {
-
-            //console.log(db.query);
+            // User with the given username does not exist
             return res.json({ Status: "Error", Error: "Wrong Username or Password" });
-
         }
     });
 });
+
+
 
 app.get('/ChatRoom', (req, res) => {
     console.log('GET request received at /retrieve route'); // Log to verify that the route handler is reached
@@ -262,6 +300,29 @@ app.get('/message', (req, res) => {
         }
     });
 });
+
+//retrieving all messages by chatroom id
+app.get('/message/:ChatRoom_ID', (req, res) => {
+    console.log('GET request received at /order route'); // Log to verify that the route handler is reached
+
+    // Extract the orderId parameter from the URL
+    const ChatRoom_ID = req.params.ChatRoom_ID;
+
+    // Query string using the orderId parameter
+    const sql = "SELECT * FROM Message WHERE ChatRoom_ID = ?";
+
+    dbConnection.query(sql, [ChatRoom_ID], (error, results) => {
+        if (error) {
+            console.error('Error retrieving data: ' + error.message);
+            res.status(500).send('Error retrieving data from the database');
+        } else {
+            console.log('Data retrieved from Order table');
+            res.status(200).json(results); // Send the retrieved data as a JSON response
+        }
+    });
+});
+
+
 
 app.post('/message', (req, res) => {
     console.log('POST request received at create Message route'); // Log to verify that the route handler is reached
