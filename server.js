@@ -1,8 +1,17 @@
 var express = require('express');
 var dbConnection = require('./dbCon');
+var cors = require('cors');
 var app = express();
 const bcrypt = require('bcrypt');
+app.use(cors({origin: '*'}));
 app.use(express.json());
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.get('/healthcheck', function (req, res) {
     res.status(200).json("API Service is running");
