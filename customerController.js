@@ -3,9 +3,15 @@ var dbConnection = require('./dbCon');
 
 router.get('/', (req, res) => {
     console.log('GET request received at /retrieve route'); // Log to verify that the route handler is reached
-
-
-    dbConnection.query('SELECT * FROM Customer', (error, results) => {
+    const {email, userId} = req.query;
+    let sql = "SELECT * FROM Customer WHERE 1=1";
+    if (email) {
+        sql += ` AND Email = '${email}'`;
+    }
+    if (userId) {
+        sql += ` AND User_ID = ${userId}`;
+    }
+    dbConnection.query(sql, (error, results) => {
 
         if (error) {
             console.error('Error retrieving data: ' + error.message);
