@@ -42,12 +42,12 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     console.log('POST request received at Create customer route'); // Log to verify that the route handler is reached
     // Use the data from the request body
-    const { Customer_ID, User_ID, Email, Address, Phone } = req.body;
+    const {User_ID, Email, Address, Phone, Name} = req.body;
     const chatData = req.body;
     console.log('Data to be inserted:', chatData); // Log to check the data being used for the insertion
 
-    var query = `INSERT INTO Customer(User_ID,Email,Address,Phone ) 
-    VALUES (${User_ID},'${Email}','${Address}','${Phone}')`;
+    var query = `INSERT INTO Customer(User_ID,Email,Address,Phone, Name) 
+    VALUES (${User_ID},'${Email}','${Address}','${Phone}', '${Name}')`;
 
     dbConnection.query(query, (error, results) => {
         if (error) {
