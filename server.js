@@ -64,9 +64,6 @@ app.post('/signup', (req, res) => {
             // A matching user already exists
             return res.status(400).json({ error: 'User with the same username already exists' });
         }
-
-        
-
         const insertedQuery = "INSERT INTO User (Username, Password, Email, Address, Phone) VALUES (?, ?, ?, ?, ?)";
         const insertedUserData = [Username, hashedPassword, Email, Address, Phone];
 
@@ -76,9 +73,20 @@ app.post('/signup', (req, res) => {
                 res.status(500).send('Error inserting data into the database');
             } else {
                 console.log('Data inserted into User table');
-                res.status(200).send('Record added to the User table');
+                console.log(results);
+                const insertQuery = "INSERT INTO Customer (User_ID, Email, Address, Phone) VALUES (?, ?, ?, ?)";
+                const insertData = [results.insertId, Email, Address, Phone];
+                dbConnection.query(insertQuery, insertData, (error, results) => {
+                    if (error) {
+                        console.error('Error inserting customer: ' + error.message);
+                        res.status(500).send('Error inserting customer into the database');
+                    } else {
+                        res.status(200).send('Record added to the User table');
+                    }
+                });
             }
         });
+       
     });
 });
 
