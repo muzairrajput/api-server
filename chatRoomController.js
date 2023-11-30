@@ -3,12 +3,16 @@ var dbConnection = require('./dbCon');
 
 router.get('/', (req, res) => {
     const {customerId, merchantId} = req.query;
-    let sql = "SELECT * FROM ChatRoom WHERE Chat_Completed = false ";
+    let sql = `SELECT cr.ChatRoom_ID, cr.Chat_Completed, c.*, c.User_ID as Customer_UserID, m.*, m.User_ID as Merchant_UserID
+               FROM ChatRoom cr
+               INNER JOIN Customer c on cr.Customer_ID = c.Customer_ID 
+               INNER JOIN Merchant m on cr.Merchant_ID = m.Merchant_ID
+               WHERE cr.Chat_Completed = false`;
     if (customerId) {
-        sql += ` AND Customer_ID = '${customerId}'`;
+        sql += ` AND cr.Customer_ID = '${customerId}'`;
     }
     if (merchantId) {
-        sql += ` AND Merchant_ID = ${merchantId}`;
+        sql += ` AND cr.Merchant_ID = ${merchantId}`;
     }
     dbConnection.query(sql, (error, results) => {
         if (error) {
