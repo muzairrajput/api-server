@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
     });
 });
 
-//retrieving all messages by chatroom id
+
 router.get('/:id', (req, res) => {
     console.log('GET request received at /order route'); // Log to verify that the route handler is reached
 
@@ -44,6 +44,28 @@ router.get('/:id', (req, res) => {
         }
     });
 });
+
+
+router.get('/vendor/:id', (req, res) => {
+    console.log('GET request received at /order route'); // Log to verify that the route handler is reached
+
+    // Extract the orderId parameter from the URL
+    const Vendor_ID = req.params.id;
+
+    // Query string using the orderId parameter
+    const sql = "SELECT * FROM Product WHERE Vendor_ID = ?";
+
+    dbConnection.query(sql, [Vendor_ID], (error, results) => {
+        if (error) {
+            console.error('Error retrieving data: ' + error.message);
+            res.status(500).send('Error retrieving data from the database');
+        } else {
+            console.log('Data retrieved from Product table');
+            res.status(200).json(results); // Send the retrieved data as a JSON response
+        }
+    });
+});
+
 
 router.post('/', (req, res) => {
     console.log('POST request received at create Product route'); // Log to verify that the route handler is reached
