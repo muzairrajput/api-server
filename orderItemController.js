@@ -48,9 +48,9 @@ router.post('/', (req, res) => {
 // delete by orderitem id
 router.delete('/:id', (req, res) => {
     console.log('DELETE request received at /delete route'); // Log to verify that the route handler is reached
-    const OrderId = req.params.id;
+    const OrderItemId = req.params.id;
 
-    dbConnection.query(`DELETE FROM OrderItems WHERE OrderId = ${OrderId}`, (error, results) => {
+    dbConnection.query(`DELETE FROM OrderItems WHERE OrderItemId = ${OrderItemId}`, (error, results) => {
         if (error) {
             console.error('Error deleting data: ' + error.message);
             res.status(500).send('Error deleting data from the database');
