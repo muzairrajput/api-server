@@ -40,12 +40,18 @@ router.get('/:ChatRoom_ID', (req, res) => {
 router.post('/', (req, res) => {
     console.log('POST request received at create Message route'); // Log to verify that the route handler is reached
     // Use the data from the request body
-    const {chatroomId, senderId, content, timesent} = req.body;
-    const msgData = req.body;
-    console.log('Data to be inserted:', msgData); // Log to check the data being used for the insertion
+    const {chatroomId, senderId, content} = req.body;
+    const timesent = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const msgBody = {
+        ChatRoom_ID: chatroomId,
+        Sender_ID: senderId,
+        Content: content,
+        TimeSent: timesent 
+    }
+    console.log('Data to be inserted:', msgBody); // Log to check the data being used for the insertion
     var query = `Insert into Message (ChatRoom_ID, Sender_ID, Content, TimeSent) 
-    values (${chatroomId}, ${senderId},'${content}', ${timesent})`;
-    dbConnection.query(query, msgData, (error, results) => {
+    values (${chatroomId}, ${senderId},'${content}', '${timesent}')`;
+    dbConnection.query(query, msgBody, (error, results) => {
         if (error) {
             console.error('Error inserting data: ' + error.message);
             res.status(500).send('Error inserting data into the database');
