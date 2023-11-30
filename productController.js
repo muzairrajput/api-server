@@ -3,7 +3,13 @@ var dbConnection = require('./dbCon');
 
 router.get('/', (req, res) => {
     // Use a SELECT query to retrieve data from the User table
-    const {category, vendorId} = req.query;
+    let {category, vendorId, sortBy, order} = req.query;
+    if (!sortBy) {
+        sortBy = 'name';
+    }
+    if (!order) {
+        order = 'ASC';
+    }
     console.log(category);
     let sql = "SELECT * FROM Product WHERE 1=1";
     if (category) {
@@ -12,6 +18,7 @@ router.get('/', (req, res) => {
     if (vendorId) {
         sql += ` AND Vendor_ID = ${vendorId}`;
     }
+    sql += ` ORDER BY ${sortBy} ${order}`;
     console.log('SQL: '+sql);
     dbConnection.query(sql, (error, results) => {
         if (error) {
