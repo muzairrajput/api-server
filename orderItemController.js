@@ -30,7 +30,7 @@ router.get('/:Order_ID', (req, res) => {
 router.post('/', (req, res) => {
     console.log('POST request received at Create Order route'); // Log to verify that the route handler is reached
     // Use the data from the request body
-    const { OrderId, ProductId, UnitPrice,Quantity } = req.body;
+    const { OrderId, ProductId, UnitPrice, Quantity } = req.body;
     const userData = req.body;
     console.log('Data to be inserted:', userData); // Log to check the data being used for the insertion
     var query = `Insert into OrderItems (OrderId, ProductId, UnitPrice,Quantity) 
@@ -64,6 +64,27 @@ router.delete('/:id', (req, res) => {
             res.status(200).send('Record deleted from the OrderItems table');
         }
     });
+});
+
+router.put('/:id', (req, res) => {
+    console.log('PUT request received at /update route');
+
+    const OrderItemId = req.params.id;
+    const updatedQuantity = req.body.Quantity; // Assuming quantity is sent in the request body
+
+    //updating
+    dbConnection.query(
+        `UPDATE OrderItems SET Quantity = ${updatedQuantity}, UnitPrice = ${newUnitPrice} WHERE OrderItemId = ${OrderItemId}`,
+        (updateError, updateResults) => {
+            if (updateError) {
+                console.error('Error updating data: ' + updateError.message);
+                res.status(500).send('Error updating data in the database');
+            } else {
+                console.log('Data updated in OrderItems table');
+                res.status(200).send('Record updated in the OrderItems table');
+            }
+        });
+
 });
 
 module.exports = router;
