@@ -10,8 +10,9 @@ router.get('/:Order_ID', (req, res) => {
     const orderId = req.params.Order_ID;
 
     // Query string using the orderId parameter
-    const sql = `SELECT * FROM OrderItems oi
+    const sql = `SELECT oi.*,p.*,ot.Customer_ID,ot.Status FROM OrderItems oi
                 INNER JOIN Product p on oi.ProductId = p.Product_ID 
+                INNER JOIN OrderTable ot on oi.OrderId = ot.Order_ID 
                 WHERE OrderId = ?`;
 
     dbConnection.query(sql, [orderId], (error, results) => {
