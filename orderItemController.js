@@ -70,7 +70,8 @@ router.put('/:id', (req, res) => {
     console.log('PUT request received at /update route');
 
     const OrderItemId = req.params.id;
-    const updatedQuantity = req.body.Quantity; // Assuming quantity is sent in the request body
+    const updatedQuantity = req.body.Quantity;
+    const newUnitPrice = req.body.UnitPrice;
 
     //updating
     dbConnection.query(

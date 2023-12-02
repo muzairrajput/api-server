@@ -96,4 +96,23 @@ router.put('/updateStatus/:id', (req, res) => {
     });
 });
 
+router.put('/:id', (req, res) => {
+    const orderId = req.params.id;
+    const {TotalPrice, Status} = req.body;
+    var sql = '';
+    if (Status) {
+        sql += `,Status = '${Status}'`;
+    }
+    var query = `UPDATE OrderTable SET TotalAmount = ${TotalPrice} ${sql} where Order_ID = ${orderId}`;
+    dbConnection.query(query, (error, results) => {
+        if (error) {
+            console.error('Error updating data: ' + error.message);
+            res.status(500).send('Error updating order status into the database');
+        } else {
+            console.log('Data updated into Order table');
+            res.status(200).send('Record updated to the ChatRoom table');
+        }
+    });
+});
+
 module.exports = router;
