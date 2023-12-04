@@ -68,7 +68,7 @@ router.delete('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-    console.log('PUT request received at /update route');
+    console.log('Put request is received at /update route');
 
     const OrderItemId = req.params.id;
     const updatedQuantity = req.body.Quantity;
