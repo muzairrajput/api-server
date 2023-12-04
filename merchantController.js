@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 router.get('/', (req, res) => {
     console.log('GET request received at merchant get route');
     // Use a SELECT query to retrieve data from the User table
-    const {email, userId} = req.query;
+    const { email, userId } = req.query;
     let sql = "SELECT * FROM Merchant WHERE 1=1";
     if (email) {
         sql += ` AND Email = '${email}'`;
@@ -18,15 +18,15 @@ router.get('/', (req, res) => {
             console.error('Error retrieving data: ' + error.message);
             res.status(500).send('Error retrieving data from the database');
         } else {
-            console.log('Data retrieved from Merchant table');
-            res.status(200).json(results); 
+            console.log('Data  gets retrieved from Merchant table');
+            res.status(200).json(results);
         }
     });
 });
 
 // Define a route to handle POST requests for data insertion
 router.post('/', (req, res) => {
-    console.log('POST request received at Create merchant route'); 
+    console.log('POST requests received at Create merchant route');
     // Use the data from the request body
     const { businessName, businessDesc, businessLicenseNumber, userId } = req.body;
     const userData = req.body;
@@ -39,19 +39,19 @@ router.post('/', (req, res) => {
             res.status(500).send('Error inserting data into the database');
         } else {
             console.log('Data inserted into Merchant table');
-            res.status(200).send('Record added to the Merchant table');
+            res.status(200).send('Records added to the Merchant table');
         }
     });
 });
 
 // Define a route to handle POST requests for data insertion
 router.post('/signup', (req, res) => {
-    console.log('POST request received at /signup route');
+    console.log('POST requests received at /signup route');
 
-    const {Username, Password, Email, Address, Phone, BusinessName, BusinessDescription, BusinessLicenseNumber} = req.body;
+    const { Username, Password, Email, Address, Phone, BusinessName, BusinessDescription, BusinessLicenseNumber } = req.body;
 
     if (!Username || !Password || !Email || !Address || !Phone || !BusinessName || !BusinessDescription || !BusinessLicenseNumber) {
-        return res.status(400).json({ error: 'All fields must be filled for successful signup.' });
+        return res.status(400).json({ error: 'All fields should be filled for successful signup.' });
     }
 
     // Hash the password
@@ -94,7 +94,7 @@ router.post('/signup', (req, res) => {
                 });
             }
         });
-       
+
     });
 });
 
