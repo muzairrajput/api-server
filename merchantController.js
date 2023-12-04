@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 
 // Define a route to handle POST requests for data insertion
 router.post('/', (req, res) => {
-    console.log('POST request received at Create merchant route');
+    console.log('POST requests received at Create merchant route');
     // Use the data from the request body
     const { businessName, businessDesc, businessLicenseNumber, userId } = req.body;
     const userData = req.body;
@@ -46,12 +46,12 @@ router.post('/', (req, res) => {
 
 // Define a route to handle POST requests for data insertion
 router.post('/signup', (req, res) => {
-    console.log('POST request received at /signup route');
+    console.log('POST requests received at /signup route');
 
     const { Username, Password, Email, Address, Phone, BusinessName, BusinessDescription, BusinessLicenseNumber } = req.body;
 
     if (!Username || !Password || !Email || !Address || !Phone || !BusinessName || !BusinessDescription || !BusinessLicenseNumber) {
-        return res.status(400).json({ error: 'All fields must be filled for successful signup.' });
+        return res.status(400).json({ error: 'All fields should be filled for successful signup.' });
     }
 
     // Hash the password
