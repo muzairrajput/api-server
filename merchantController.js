@@ -5,7 +5,15 @@ const bcrypt = require('bcrypt');
 router.get('/', (req, res) => {
     console.log('GET request received at merchant get route');
     // Use a SELECT query to retrieve data from the User table
-    dbConnection.query('SELECT * FROM Merchant', (error, results) => {
+    const {email, userId} = req.query;
+    let sql = "SELECT * FROM Merchant WHERE 1=1";
+    if (email) {
+        sql += ` AND Email = '${email}'`;
+    }
+    if (userId) {
+        sql += ` AND User_ID = ${userId}`;
+    }
+    dbConnection.query(sql, (error, results) => {
         if (error) {
             console.error('Error retrieving data: ' + error.message);
             res.status(500).send('Error retrieving data from the database');
