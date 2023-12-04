@@ -72,4 +72,24 @@ router.post('/', (req, res) => {
     });
 });
 
+router.put('/:productId', (req, res) => {
+    console.log('POST request received at create Product route'); // Log to verify that the route handler is reached
+    // Use the data from the request body
+    const productId = req.params.productId;
+    const {name, description, category, price, stock} = req.body;
+    const msgData = req.body;
+    console.log('Data to be updated:', msgData); // Log to check the data being used for the insertion
+    var query = `UPDATE Product SET Name = '${name}', Description = '${description}', Category = '${category}', Price = ${price}, StockQuantity = ${stock} WHERE Product_ID = ${productId}`;
+    console.log(query);
+    dbConnection.query(query, msgData, (error, results) => {
+        if (error) {
+            console.error('Error updating data: ' + error.message);
+            res.status(500).send('Error updating data into the database');
+        } else {
+            console.log('Data updating into Product table');
+            res.status(200).send('Record updating to the Product table');
+        }
+    });
+});
+
 module.exports = router;
