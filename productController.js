@@ -55,11 +55,11 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     console.log('POST request received at create Product route'); // Log to verify that the route handler is reached
     // Use the data from the request body
-    const {name, description, category, price, stock, vendorId} = req.body;
+    const {name, description, category, price, stock, vendorId, imageUrl} = req.body;
     const msgData = req.body;
     console.log('Data to be inserted:', msgData); // Log to check the data being used for the insertion
-    var query = `INSERT INTO Product (Name, Description, Category, Price, StockQuantity, Vendor_ID)
-    values ('${name}', '${description}','${category}', ${price}, ${stock}, ${vendorId})`;
+    var query = `INSERT INTO Product (Name, Description, Category, Price, StockQuantity, Vendor_ID, Image)
+    values ('${name}', '${description}','${category}', ${price}, ${stock}, ${vendorId}, '${imageUrl}')`;
     console.log(query);
     dbConnection.query(query, msgData, (error, results) => {
         if (error) {
@@ -76,10 +76,10 @@ router.put('/:productId', (req, res) => {
     console.log('POST request received at create Product route'); // Log to verify that the route handler is reached
     // Use the data from the request body
     const productId = req.params.productId;
-    const {name, description, category, price, stock} = req.body;
+    const {name, description, category, price, stock, imageUrl} = req.body;
     const msgData = req.body;
     console.log('Data to be updated:', msgData); // Log to check the data being used for the insertion
-    var query = `UPDATE Product SET Name = '${name}', Description = '${description}', Category = '${category}', Price = ${price}, StockQuantity = ${stock} WHERE Product_ID = ${productId}`;
+    var query = `UPDATE Product SET Name = '${name}', Description = '${description}', Category = '${category}', Price = ${price}, StockQuantity = ${stock}, Image = '${imageUrl}' WHERE Product_ID = ${productId}`;
     console.log(query);
     dbConnection.query(query, msgData, (error, results) => {
         if (error) {
